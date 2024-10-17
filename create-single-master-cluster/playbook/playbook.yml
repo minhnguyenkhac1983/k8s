@@ -2,7 +2,7 @@
 
 - hosts: masters, workers
   name: Setup masters and workers
-  remote_user: ci
+  remote_user: vagrant
   become: true
   tasks:
     # https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#before-you-begin
@@ -140,7 +140,7 @@
 
 - hosts: masters
   name: Init cluster
-  remote_user: ci
+  remote_user: vagrant
   become: true
   tasks:
     - name: Reset existing cluster
@@ -163,9 +163,9 @@
     - name: Copy kube-flannel-v0.16.3.yml
       copy:
         src: ../kube-flannel-v0.16.3.yml
-        dest: /home/ci/kube-flannel-v0.16.3.yml
-        owner: ci
-        group: ci
+        dest: /home/vagrant/kube-flannel-v0.16.3.yml
+        owner: vagrant
+        group: vagrant
         mode: '0644'
 
     - name: Deploy Flannel network
@@ -181,10 +181,10 @@
 
     - name: Create directory for kube config
       file:
-        path: /home/ci/.kube
+        path: /home/vagrant/.kube
         state: directory
-        owner: ci
-        group: ci
+        owner: vagrant
+        group: vagrant
         mode: 0755
 
     - name: Copy /etc/kubernetes/admin.conf to user home directory
@@ -193,10 +193,10 @@
       become: true
       copy:
         src: /etc/kubernetes/admin.conf
-        dest: /home/ci/.kube/config
+        dest: /home/vagrant/.kube/config
         remote_src: yes
-        owner: ci
-        group: ci
+        owner: vagrant
+        group: vagrant
         mode: '0644'
 
     # This got updated after the video
@@ -215,7 +215,7 @@
 
 - hosts: workers
   name: Join workers
-  remote_user: ci
+  remote_user: vagrant
   become: true
   tasks:
     - name: Reset existing cluster

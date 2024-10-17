@@ -31,14 +31,14 @@ ansible-playbook -i playbook/inventory.yml playbook/playbook.yml
 
 Let's ssh into the master VM, and verify the cluster
 ```
-ssh ci@172.16.1.11
+ssh vagrant@172.16.1.11
 kubectl get nodes
 ```
 
 Download kubeconfig to  your local
 ```
 mkdir ~/.kube-local
-scp ci@172.16.1.11:/home/ci/.kube/config ~/.kube-local/config
+scp vagrant@172.16.1.11:/home/vagrant/.kube/config ~/.kube-local/config
 export KUBECONFIG=~/.kube-local/config && kubectl get nodes
 ```
 
