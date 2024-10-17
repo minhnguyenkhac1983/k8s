@@ -4,15 +4,16 @@ Vagrant.configure("2") do |config|
     MasterCount = 1
     (1..MasterCount).each do |i|
         config.vm.define "k8s-master-#{i}" do |master|
-            master.vm.box = "generic/ubuntu2004"
-            master.vm.box_version = "3.6.8"
+            master.vm.box = "gutehall/ubuntu24-10"
+            master.vm.box_version = "2024.10.11"
             master.vm.hostname = "k8s-master-#{i}"
-            master.vm.network "private_network", ip: "172.16.1.1#{i}"
+            master.vm.network "private_network", ip: "172.16.10.1#{i}"
 
-            master.vm.provider "virtualbox" do |vb|
-                vb.name = "k8s-master-#{i}"
-                vb.memory = 2048
-                vb.cpus = 2
+            master.vm.provider :vmware_workstation do |vb|
+                vb.gui = true
+				vb.memory = 4096
+				vb.cpus = 2
+				vb.vmx["displayname"] = "k8s-master-#{i}"
             end
         end
     end
@@ -21,27 +22,23 @@ Vagrant.configure("2") do |config|
     WorkerCount = 3
     (1..WorkerCount).each do |i|
         config.vm.define "k8s-worker-#{i}" do |worker|
-            worker.vm.box = "generic/ubuntu2004"
-            worker.vm.box_version = "3.6.8"
+            worker.vm.box = "gutehall/ubuntu24-10"
+            worker.vm.box_version = "2024.10.11"
             worker.vm.hostname = "k8s-worker-#{i}"
-            worker.vm.network "private_network", ip: "172.16.2.1#{i}"
+            worker.vm.network "private_network", ip: "172.16.16.1#{i}"
 
-            worker.vm.provider "virtualbox" do |vb|
-                vb.name = "k8s-worker-#{i}"
-                vb.memory = 2048
-                vb.cpus = 2
+            worker.vm.provider :vmware_workstation do |vb|
+                vb.gui = true
+				vb.memory = 4096
+				vb.cpus = 2
+				vb.vmx["displayname"] = "k8s-worker-#{i}"
             end
         end
     end
 
     config.vm.provision "shell" do |s|
-        ssh_pub_key = File.readlines("#{Dir.home}/.ssh/id_rsa.pub").first.strip
         s.inline = <<-SHELL
-            # Create ci user
-            useradd -s /bin/bash -d /home/ci/ -m -G sudo ci
-            echo 'ci ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
-            mkdir -p /home/ci/.ssh && chown -R ci /home/ci/.ssh
-            echo #{ssh_pub_key} >> /home/ci/.ssh/authorized_keys
+            echo 'vagrant ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
         SHELL
     end
 
