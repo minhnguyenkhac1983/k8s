@@ -120,17 +120,17 @@
         
     - name: "install :: adds the official Kubernetes repository"
       become: true
-       ansible.builtin.shell: |    
-        echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
-        curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+      ansible.builtin.shell: |    
+        echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+        curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
         sudo apt-get update
 
     - name: Install kubelet, kubeadm and kubectl
       apt:
         name:
-          - kubeadm=1.31.*
-          - kubectl=1.31.*
-          - kubelet=1.31.*
+          - kubeadm=1.28.*
+          - kubectl=1.28.*
+          - kubelet=1.28.*
         state: present
 
     - name: Enable kubelet service
@@ -156,7 +156,7 @@
       shell: rm -rf /var/lib/etcd
 
     - name: Init kubernetes cluster
-      shell: kubeadm init --control-plane-endpoint=172.16.1.11:6443 --upload-certs --apiserver-advertise-address=172.16.1.11 --pod-network-cidr=10.244.0.0/16
+      shell: kubeadm init --control-plane-endpoint=192.168.180.129:6443 --upload-certs --apiserver-advertise-address=192.168.180.129 --pod-network-cidr=10.244.0.0/16
 
     # This got updated after the video
     # Use release 0.16.3, rather than master version!
